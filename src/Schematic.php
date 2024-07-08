@@ -8,58 +8,101 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Nette\Utils\ArrayHash;
 use Nette\Utils\FileSystem;
-use Stepapo\Utils\ConfigProcessor;
 use Stepapo\Utils\Attribute\ArrayOfType;
+use Stepapo\Utils\Attribute\CopyValue;
+use Stepapo\Utils\Attribute\KeyProperty;
+use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
-use Webovac\Core\Model\CmsDataRepository;
+use Stepapo\Utils\Attribute\ValueProperty;
 
 
 class Schematic extends ArrayHash
 {
-	public static function createFromNeon(string $file, array $params = [], string $mode = CmsDataRepository::MODE_INSTALL): static
+	public static function createFromNeon(string $file, array $params = [], bool $skipDefaults = false): static
 	{
 		$config = (array) Neon::decode(FileSystem::read($file));
-		$parsedConfig = ConfigProcessor::replaceParams($config, $params);
-		return static::createFromArray($parsedConfig, $mode);
+		$config = ConfigProcessor::process($config, $params);
+		return static::createFromArray($config, skipDefaults: $skipDefaults);
 	}
 
 
-	public static function createFromArray(array $config, string $mode = CmsDataRepository::MODE_INSTALL): static
+	public static function createFromArray(mixed $config = [], mixed $key = null, bool $skipDefaults = false): static
 	{
-		$schema = static::getSchema($mode);
+		$schema = static::getSchema($skipDefaults);
 		if (!$schema) {
 			throw new InvalidArgumentException;
 		}
-		$data = (new Processor)->process($schema, $config);
+		$valueProperty = static::getValueProperty();
+		if ($valueProperty && !isset($config[$valueProperty])) {
+			$config = [$valueProperty => $config];
+		}
+		if ($key) {
+			$keyProperty = static::getKeyProperty();
+			if ($keyProperty) {
+				$config[$keyProperty] = $key;
+			}
+		}
 		$rc = new \ReflectionClass(static::class);
 		$props = $rc->getProperties();
+		foreach ($props as $prop) {
+			if ($prop->getAttributes(ToArray::class) && isset($config[$prop->getName()])) {
+				$config[$prop->getName()] = (array) $config[$prop->getName()];
+			}
+		}
+		$data = (new Processor)->process($schema, $config);
 		foreach ($props as $prop) {
 			$name = $prop->getName();
 			if ($attr = $prop->getAttributes(Type::class)) {
 				$class = $attr[0]->getArguments()[0];
 				if (isset($config[$name])) {
-					$data->$name = $class::createFromArray((array) $config[$name], $mode);
+					$data->$name = $class::createFromArray($config[$name], skipDefaults: $skipDefaults);
 				}
 			}
 			if ($attr = $prop->getAttributes(ArrayOfType::class)) {
 				$class = $attr[0]->getArguments()[0];
-				$keyProperty = $attr[0]->getArguments()[1] ?? null;
-				foreach ($data->$name as $key => $subConfig) {
-					if ($keyProperty) {
-						$subConfig[$keyProperty] ??= $key;
-						unset($data->$name[$key]);
-						$key = $subConfig[$keyProperty];
-					}
-					$data->$name[$key] = $class::createFromArray((array) $subConfig, $mode);
+				foreach ((array) $data->$name as $subKey => $subConfig) {
+					$data->$name[$subKey] = $class::createFromArray($subConfig, $subKey, $skipDefaults);
 				}
+			}
+			if ($attr = $prop->getAttributes(CopyValue::class)) {
+				$from = $attr[0]->getArguments()[0];
+				$data->$name ??= $data->$from;
 			}
 		}
 		return $data;
 	}
 
 
-	protected static function getSchema(string $mode = CmsDataRepository::MODE_INSTALL): ?Schema
+	protected static function getSchema(bool $skipDefaults = false): ?Schema
 	{
-		return Expect::fromSchematic(static::class, $mode);
+		return Expect::fromSchematic(static::class, $skipDefaults);
+	}
+
+
+	protected static function getKeyProperty(): ?string
+	{
+		$rc = new \ReflectionClass(static::class);
+		$props = $rc->getProperties();
+		foreach ($props as $prop) {
+			$name = $prop->getName();
+			if ($prop->getAttributes(KeyProperty::class)) {
+				return $name;
+			}
+		}
+		return null;
+	}
+
+
+	protected static function getValueProperty(): ?string
+	{
+		$rc = new \ReflectionClass(static::class);
+		$props = $rc->getProperties();
+		foreach ($props as $prop) {
+			$name = $prop->getName();
+			if ($prop->getAttributes(ValueProperty::class)) {
+				return $name;
+			}
+		}
+		return null;
 	}
 }

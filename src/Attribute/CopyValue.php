@@ -8,7 +8,8 @@ use Attribute;
 
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class DefaultValueFromSchematic
+class CopyValue
 {
-	public function __construct(public string $value) {}
+	public function __construct(public string $from)
+	{}
 }

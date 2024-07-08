@@ -9,16 +9,15 @@ use Nette\Schema\Elements\Type;
 use Nette\Schema\Helpers;
 use Nette\Utils\Validators;
 use ReflectionClass;
+use Stepapo\Utils\Attribute\DefaultFromSchematic;
 use Stepapo\Utils\Attribute\DefaultValue;
-use Stepapo\Utils\Attribute\DefaultValueFromSchematic;
-use Webovac\Core\Model\CmsDataRepository;
 
 
 class Expect
 {
-	public static function fromSchematic(string $class, string $mode, array $items = []): Structure
+	public static function fromSchematic(string $schematic, bool $skipDefaults = false, array $items = []): Structure
 	{
-		$rc = new ReflectionClass($class);
+		$rc = new ReflectionClass($schematic);
 		$props = $rc->getProperties();
 
 		foreach ($props as $prop) {
@@ -29,24 +28,16 @@ class Expect
 				$def = $prop->getDefaultValue();
 			} elseif ($attr = $prop->getAttributes(DefaultValue::class)) {
 				$def = $attr[0]->getArguments()[0];
-			} elseif ($attr = $prop->getAttributes(DefaultValueFromSchematic::class)) {
-				$class = $attr[0]->getArguments()[0];
-				$def = $class::createFromArray([], $mode);
+			} elseif ($attr = $prop->getAttributes(DefaultFromSchematic::class)) {
+				$schematic = $attr[0]->getArguments()[0];
+				$def = $schematic::createFromArray();
 			} else {
 				$def = null;
 			}
 			if ($def === null) {
 				if (Validators::is(null, $type)) {
 					$item->default(null);
-				} elseif (ReflectionHelper::propertyHasType($prop, 'bool')) {
-					$item->default(false);
-				} elseif (ReflectionHelper::propertyHasType($prop, 'string')) {
-					$item->default('');
-				} elseif (ReflectionHelper::propertyHasType($prop, 'int') || ReflectionHelper::propertyHasType($prop, 'float')) {
-					$item->default(0);
-				} elseif (ReflectionHelper::propertyHasType($prop, 'array')) {
-					$item->default([]);
-				} else {
+				} else if (!$skipDefaults) {
 					$item->required();
 				}
 			} else {
@@ -54,6 +45,6 @@ class Expect
 			}
 		}
 
-		return (new Structure($items))->skipDefaults($mode === CmsDataRepository::MODE_UPDATE)->castTo($rc->getName());
+		return (new Structure($items))->skipDefaults($skipDefaults)->castTo($rc->getName());
 	}
 }

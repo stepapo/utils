@@ -6,9 +6,7 @@ namespace Stepapo\Utils\Model;
 
 use InvalidArgumentException;
 use ReflectionClass;
-use ReflectionNamedType;
 use Stepapo\Utils\ReflectionHelper;
-use Stepapo\Utils\Model\Collection;
 use Stepapo\Utils\Schematic;
 
 
@@ -19,7 +17,7 @@ class Item extends Schematic
 		$rf = new ReflectionClass($this);
 		$prop = $rf->getProperty($name);
 		if (!property_exists($this, $name) || !$this->isCollection($name)) {
-			throw new InvalidArgumentException;
+			throw new InvalidArgumentException("Property '$name' does not exist or is not a collection.");
 		}
 		return new Collection($prop->isInitialized($this) ? $this->$name : []);
 	}

@@ -20,12 +20,12 @@ class Collection extends ArrayObject
 	{
 		return new Collection(array_filter(
 			(array) $this,
-			function (Item $entity) use ($conds) {
+			function (Item $item) use ($conds) {
 				foreach ($conds as $property => $value) {
-					if (!property_exists($entity, $property)) {
-						throw new InvalidArgumentException;
+					if (!property_exists($item, $property)) {
+						throw new InvalidArgumentException("Property '$property' does not exist.");
 					}
-					if ($entity->$property !== $value) {
+					if ($item->$property !== $value) {
 						return false;
 					}
 				}

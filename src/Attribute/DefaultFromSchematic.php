@@ -8,8 +8,8 @@ use Attribute;
 
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class ArrayOfType
+class DefaultFromSchematic
 {
-	public function __construct(public string $class)
+	public function __construct(public string $schematic)
 	{}
 }
