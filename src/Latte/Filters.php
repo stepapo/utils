@@ -29,4 +29,18 @@ class Filters
 		}
 		return $second;
 	}
+
+
+	public static function monthName(int $monthNumber, ?string $locale = null): string
+	{
+		$dateTime = \DateTime::createFromFormat('!m', (string) $monthNumber);
+		return static::intlDate($dateTime, 'MMM', $locale);
+	}
+
+
+	public static function duration(float $duration): string
+	{
+		$date = new \DateTime('@' . ($duration ?: 0));
+		return $date->format('H:i:s');
+	}
 }
