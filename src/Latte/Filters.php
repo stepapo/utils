@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Stepapo\Utils\Latte;
 
+use DateTime;
+use DateTimeInterface;
+use IntlDateFormatter;
+
 
 class Filters
 {
-	public static function intlDate(\DateTimeInterface $time, string $pattern, ?string $locale = null): ?string
+	public static function intlDate(DateTimeInterface $time, string $pattern, ?string $locale = null): ?string
 	{
-		$formatter = new \IntlDateFormatter(
+		$formatter = new IntlDateFormatter(
 			$locale ?: setlocale(LC_TIME, 0),
-			\IntlDateFormatter::LONG,
-			\IntlDateFormatter::LONG
+			IntlDateFormatter::LONG,
+			IntlDateFormatter::LONG
 		);
 		$formatter->setPattern($pattern);
 		return $formatter->format($time);
@@ -33,14 +37,17 @@ class Filters
 
 	public static function monthName(int $monthNumber, ?string $locale = null): string
 	{
-		$dateTime = \DateTime::createFromFormat('!m', (string) $monthNumber);
+		$dateTime = DateTime::createFromFormat('!m', (string) $monthNumber);
 		return static::intlDate($dateTime, 'MMM', $locale);
 	}
 
 
+	/**
+	 * @throws \Exception
+	 */
 	public static function duration(float $duration): string
 	{
-		$date = new \DateTime('@' . ($duration ?: 0));
+		$date = new DateTime('@' . ($duration ?: 0));
 		return $date->format('H:i:s');
 	}
 }

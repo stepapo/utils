@@ -12,6 +12,9 @@ use Stepapo\Utils\Schematic;
 
 class Item extends Schematic
 {
+	/**
+	 * @throws \ReflectionException
+	 */
 	public function getCollection(string $name): Collection
 	{
 		$rf = new ReflectionClass($this);
@@ -23,6 +26,9 @@ class Item extends Schematic
 	}
 
 
+	/**
+	 * @throws \ReflectionException
+	 */
 	public function isCollection(string $name): bool
 	{
 		$rf = new ReflectionClass($this);

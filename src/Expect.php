@@ -15,6 +15,9 @@ use Stepapo\Utils\Attribute\DefaultValue;
 
 class Expect
 {
+	/**
+	 * @throws \ReflectionException
+	 */
 	public static function fromSchematic(string $schematic, bool $skipDefaults = false, array $items = []): Structure
 	{
 		$rc = new ReflectionClass($schematic);

@@ -8,6 +8,7 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Nette\Utils\ArrayHash;
 use Nette\Utils\FileSystem;
+use ReflectionClass;
 use Stepapo\Utils\Attribute\ArrayOfType;
 use Stepapo\Utils\Attribute\CopyValue;
 use Stepapo\Utils\Attribute\KeyProperty;
@@ -42,7 +43,7 @@ class Schematic extends ArrayHash
 				$config[$keyProperty] = $key;
 			}
 		}
-		$rc = new \ReflectionClass(static::class);
+		$rc = new ReflectionClass(static::class);
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
 			if ($prop->getAttributes(ToArray::class) && isset($config[$prop->getName()])) {
@@ -81,7 +82,7 @@ class Schematic extends ArrayHash
 
 	protected static function getKeyProperty(): ?string
 	{
-		$rc = new \ReflectionClass(static::class);
+		$rc = new ReflectionClass(static::class);
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
 			$name = $prop->getName();
@@ -95,7 +96,7 @@ class Schematic extends ArrayHash
 
 	protected static function getValueProperty(): ?string
 	{
-		$rc = new \ReflectionClass(static::class);
+		$rc = new ReflectionClass(static::class);
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
 			$name = $prop->getName();
