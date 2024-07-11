@@ -46,23 +46,26 @@ class Schematic extends ArrayHash
 		$rc = new ReflectionClass(static::class);
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
-			if ($prop->getAttributes(ToArray::class) && isset($config[$prop->getName()])) {
-				$config[$prop->getName()] = (array) $config[$prop->getName()];
+			$name = $prop->getName();
+			if ($prop->getAttributes(ToArray::class) && isset($config[$name])) {
+				$config[$name] = (array) $config[$name];
 			}
 		}
 		$data = (new Processor)->process($schema, $config);
 		foreach ($props as $prop) {
 			$name = $prop->getName();
 			if ($attr = $prop->getAttributes(Type::class)) {
-				$class = $attr[0]->getArguments()[0];
 				if (isset($config[$name])) {
+					$class = $attr[0]->getArguments()[0];
 					$data->$name = $class::createFromArray($config[$name], skipDefaults: $skipDefaults);
 				}
 			}
 			if ($attr = $prop->getAttributes(ArrayOfType::class)) {
-				$class = $attr[0]->getArguments()[0];
-				foreach ((array) $data->$name as $subKey => $subConfig) {
-					$data->$name[$subKey] = $class::createFromArray($subConfig, $subKey, $skipDefaults);
+				if (isset($config[$name])) {
+					$class = $attr[0]->getArguments()[0];
+					foreach ((array) $data->$name as $subKey => $subConfig) {
+						$data->$name[$subKey] = $class::createFromArray($subConfig, $subKey, $skipDefaults);
+					}
 				}
 			}
 			if ($attr = $prop->getAttributes(CopyValue::class)) {
