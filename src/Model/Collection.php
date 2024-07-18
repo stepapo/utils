@@ -25,8 +25,21 @@ class Collection extends ArrayObject
 					if (!property_exists($item, $property)) {
 						throw new InvalidArgumentException("Property '$property' does not exist.");
 					}
-					if ($item->$property !== $value) {
-						return false;
+					if (is_array($value)) {
+						$has = false;
+						foreach ($value as $v) {
+							if ($item->$property === $v) {
+								$has = true;
+								break;
+							}
+						}
+						if (!$has) {
+							return false;
+						}
+					} else {
+						if ($item->$property !== $value) {
+							return false;
+						}
 					}
 				}
 				return true;
