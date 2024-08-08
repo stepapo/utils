@@ -3,6 +3,7 @@
 namespace Stepapo\Utils;
 
 use Nette\InvalidArgumentException;
+use Nette\Neon\Entity;
 use Nette\Neon\Neon;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
@@ -47,7 +48,14 @@ class Schematic extends ArrayHash
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
 			$name = $prop->getName();
-			if ($prop->getAttributes(ToArray::class) && isset($config[$name])) {
+			if (!isset($config[$name])) {
+				continue;
+			}
+			if ($config[$name] instanceof Entity) {
+				$rf = new ReflectionClass($config[$name]->value);
+				$config[$name] = $rf->newInstance(...$config[$name]->attributes);
+			}
+			if ($prop->getAttributes(ToArray::class)) {
 				$config[$name] = (array) $config[$name];
 			}
 		}
