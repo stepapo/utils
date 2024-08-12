@@ -85,13 +85,13 @@ class Schematic extends ArrayHash
 	}
 
 
-	protected static function getSchema(bool $skipDefaults = false): ?Schema
+	public static function getSchema(bool $skipDefaults = false): ?Schema
 	{
 		return Expect::fromSchematic(static::class, $skipDefaults);
 	}
 
 
-	protected static function getKeyProperty(): ?string
+	public static function getKeyProperty(): ?string
 	{
 		$rc = new ReflectionClass(static::class);
 		$props = $rc->getProperties();
@@ -105,7 +105,7 @@ class Schematic extends ArrayHash
 	}
 
 
-	protected static function getValueProperty(): ?string
+	public static function getValueProperty(): ?string
 	{
 		$rc = new ReflectionClass(static::class);
 		$props = $rc->getProperties();
