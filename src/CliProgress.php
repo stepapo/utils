@@ -13,7 +13,7 @@ class CliProgress
 
 	public function __construct(private int $itemCount)
 	{
-		$this->digitCount = $itemCount ? floor(log($itemCount, 10) + 1) : 1;
+		$this->digitCount = $itemCount ? (int) floor(log($itemCount, 10) + 1) : 1;
 		$this->totalCharsCount = $this->digitCount * 2 + 10;
 	}
 
