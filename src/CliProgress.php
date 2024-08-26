@@ -9,6 +9,7 @@ class CliProgress
 {
 	private int $digitCount;
 	private int $totalCharsCount;
+	private int $current = 0;
 
 
 	public function __construct(private int $itemCount)
@@ -24,16 +25,17 @@ class CliProgress
 	}
 
 
-	public function iterate(int $i = 0): void
+	public function iterate(): void
 	{
 		printf(
 			"\033[%dD%3d%% : %*d / %d",
 			$this->totalCharsCount,
-			$this->itemCount ? floor($i / $this->itemCount * 100) : 100,
+			$this->itemCount ? floor($this->current / $this->itemCount * 100) : 100,
 			$this->digitCount,
-			$i,
+			$this->current,
 			$this->itemCount
 		);
+		$this->current++;
 	}
 
 
