@@ -44,7 +44,7 @@ class Expect
 					$item->required();
 				}
 			} else {
-				$item->default($def);
+				$item->default($def)->mergeDefaults(false);
 			}
 		}
 
