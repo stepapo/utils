@@ -50,7 +50,7 @@ class Schematic extends ArrayHash
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
 			$name = $prop->getName();
-			if (!isset($config[$name])) {
+			if (!array_key_exists($name, $config)) {
 				continue;
 			}
 			if ($config[$name] instanceof Entity) {
