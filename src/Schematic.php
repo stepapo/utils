@@ -148,6 +148,9 @@ class Schematic extends ArrayHash
 			if (!isset($this->{$name}) xor !isset($other->{$name})) {
 				return false;
 			}
+			if (!isset($this->{$name}) && !isset($this->{$name})) {
+				continue;
+			}
 			if (!$this->areSame($this->{$name}, $other->{$name})) {
 				return false;
 			}

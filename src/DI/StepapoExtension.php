@@ -13,7 +13,8 @@ use Nette\Schema\Schema;
 use Nette\Schema\ValidationException;
 use ReflectionClass;
 use Stepapo\Utils\Command\Command;
-use Webovac\Core\Factory;
+use Stepapo\Utils\Service;
+use Stepapo\Utils\Factory;
 use Webovac\Core\Module;
 
 
@@ -76,10 +77,7 @@ abstract class StepapoExtension extends CompilerExtension
 	protected function getSearchConfig(): array
 	{
 		return [
-			'module' => ['in' => $this->moduleDir, 'implements' => Module::class],
-			'command' => ['in' => $this->moduleDir, 'implements' => Command::class],
-			'control' => ['in' => $this->moduleDir, 'implements' => Factory::class],
-			'lib' => ['in' => "$this->moduleDir/Lib/", 'classes' => '*'],
+			['in' => $this->moduleDir, 'implements' => Service::class],
 		];
 	}
 }
