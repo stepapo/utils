@@ -12,10 +12,7 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Nette\Schema\ValidationException;
 use ReflectionClass;
-use Stepapo\Utils\Command\Command;
 use Stepapo\Utils\Service;
-use Stepapo\Utils\Factory;
-use Webovac\Core\Module;
 
 
 abstract class StepapoExtension extends CompilerExtension

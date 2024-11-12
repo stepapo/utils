@@ -18,7 +18,6 @@ use Stepapo\Utils\Attribute\KeyProperty;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
-use Tracy\Dumper;
 
 
 class Schematic extends ArrayHash
