@@ -10,6 +10,7 @@ use Nette\Neon\Neon;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Nette\Utils\ArrayHash;
+use Nette\Utils\Arrays;
 use Nette\Utils\FileSystem;
 use ReflectionClass;
 use Stepapo\Utils\Attribute\ArrayOfType;
@@ -169,9 +170,12 @@ class Schematic extends ArrayHash
 				return false;
 			}
 		} elseif (is_array($one) && is_array($two)) {
-			foreach ($one as $key => $value) {
-				return $this->areSame($one[$key], $two[$key]);
-			}
+			sort($one);
+			sort($two);
+			return $one == $two;
+//			foreach ($one as $key => $value) {
+//				return $this->areSame($one[$key], $two[$key] ?? null);
+//			}
 		} elseif ($one !== $two) {
 			return false;
 		}
