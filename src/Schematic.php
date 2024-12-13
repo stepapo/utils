@@ -7,14 +7,18 @@ namespace Stepapo\Utils;
 use Nette\InvalidArgumentException;
 use Nette\Neon\Entity;
 use Nette\Neon\Neon;
+use Nette\Schema\Elements\Structure;
+use Nette\Schema\Helpers;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Nette\Utils\ArrayHash;
-use Nette\Utils\Arrays;
 use Nette\Utils\FileSystem;
+use Nette\Utils\Validators;
 use ReflectionClass;
 use Stepapo\Utils\Attribute\ArrayOfType;
 use Stepapo\Utils\Attribute\CopyValue;
+use Stepapo\Utils\Attribute\DefaultFromSchematic;
+use Stepapo\Utils\Attribute\DefaultValue;
 use Stepapo\Utils\Attribute\KeyProperty;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
@@ -67,34 +71,34 @@ class Schematic extends ArrayHash
 				$config[$name] = (array) $config[$name];
 			}
 		}
-		$data = (new Processor)->process($schema, $config);
 		foreach ($props as $prop) {
 			$name = $prop->getName();
 			if ($attr = $prop->getAttributes(Type::class)) {
 				if (isset($config[$name])) {
 					$class = $attr[0]->getArguments()[0];
-					$data->$name = $class::createFromArray($config[$name], skipDefaults: $skipDefaults, parentKey: $key);
+					$config[$name] = $class::createFromArray($config[$name], skipDefaults: $skipDefaults, parentKey: $key);
 				}
 			}
 			if ($attr = $prop->getAttributes(ArrayOfType::class)) {
 				if (isset($config[$name])) {
 					$class = $attr[0]->getArguments()[0];
-					foreach ((array) $data->$name as $subKey => $subConfig) {
+					foreach ((array) $config[$name] as $subKey => $subConfig) {
 						$subData = $class::createFromArray($subConfig, $subKey, $skipDefaults, parentKey: $key);
 						$subKeyProperty = $subData::getKeyProperty();
 						if ($subKeyProperty) {
-							unset($data->$name[$subKey]);
+							unset($config[$name][$subKey]);
 							$subKey = $subData->{$subKeyProperty};
 						}
-						$data->$name[$subKey] = $subData;
+						$config[$name][$subKey] = $subData;
 					}
 				}
 			}
 			if ($attr = $prop->getAttributes(CopyValue::class)) {
 				$from = $attr[0]->getArguments()[0];
-				$data->$name ??= $data->$from;
+				$config[$name] ??= $config[$from];
 			}
 		}
+		$data = (new Processor)->process($schema, $config);
 		if ($rc->hasMethod('process')) {
 			$data->process($parentKey);
 		}
@@ -104,7 +108,41 @@ class Schematic extends ArrayHash
 
 	public static function getSchema(bool $skipDefaults = false): ?Schema
 	{
-		return Expect::fromSchematic(static::class, $skipDefaults);
+		$rc = new ReflectionClass(static::class);
+		$props = $rc->getProperties();
+		$items = [];
+
+		foreach ($props as $prop) {
+			$type = Helpers::getPropertyType($prop) ?? 'mixed';
+			$item = new \Nette\Schema\Elements\Type($type);
+			$items[$prop->getName()] = $item;
+			if ($prop->hasDefaultValue()) {
+				$def = $prop->getDefaultValue();
+			} elseif ($defaultValue = $prop->getAttributes(DefaultValue::class)) {
+				if ($type = $prop->getAttributes(Type::class)) {
+					$schematic = $type[0]->getArguments()[0];
+					$def = $schematic::createFromArray($defaultValue[0]->getArguments()[0]);
+				} else {
+					$def = $defaultValue[0]->getArguments()[0];
+				}
+			} elseif ($attr = $prop->getAttributes(DefaultFromSchematic::class)) {
+				$schematic = $attr[0]->getArguments()[0];
+				$def = $schematic::createFromArray();
+			} else {
+				$def = null;
+			}
+			if ($def === null) {
+				if (Validators::is(null, $type)) {
+					$item->default(null);
+				} else if (!$skipDefaults) {
+					$item->required();
+				}
+			} else {
+				$item->default($def)->mergeDefaults(false);
+			}
+		}
+
+		return (new Structure($items))->skipDefaults($skipDefaults)->castTo($rc->getName());
 	}
 
 
