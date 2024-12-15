@@ -8,8 +8,8 @@ use Attribute;
 
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class DefaultFromSchematic
+class DefaultFromConfig
 {
-	public function __construct(public string $schematic)
+	public function __construct(public string $config)
 	{}
 }

@@ -26,12 +26,6 @@ class FileControl extends Container
 	}
 
 
-	public function getValues(string|object|bool|null $returnType = null, ?array $controls = null): object|array
-	{
-		return parent::getValue();
-	}
-
-
 	/** @param FileData|null $values */
 	public function setValues(array|object $values, bool $erase = false, bool $onlyDisabled = false): static
 	{

@@ -17,7 +17,7 @@ use Nette\Utils\Validators;
 use ReflectionClass;
 use Stepapo\Utils\Attribute\ArrayOfType;
 use Stepapo\Utils\Attribute\CopyValue;
-use Stepapo\Utils\Attribute\DefaultFromSchematic;
+use Stepapo\Utils\Attribute\DefaultFromConfig;
 use Stepapo\Utils\Attribute\DefaultValue;
 use Stepapo\Utils\Attribute\KeyProperty;
 use Stepapo\Utils\Attribute\ToArray;
@@ -25,7 +25,7 @@ use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
 
 
-class Schematic extends ArrayHash
+class Config extends ArrayHash
 {
 	public static function createFromNeon(string $file, array $params = [], bool $skipDefaults = false): static
 	{
@@ -120,14 +120,14 @@ class Schematic extends ArrayHash
 				$def = $prop->getDefaultValue();
 			} elseif ($defaultValue = $prop->getAttributes(DefaultValue::class)) {
 				if ($type = $prop->getAttributes(Type::class)) {
-					$schematic = $type[0]->getArguments()[0];
-					$def = $schematic::createFromArray($defaultValue[0]->getArguments()[0]);
+					$config = $type[0]->getArguments()[0];
+					$def = $config::createFromArray($defaultValue[0]->getArguments()[0]);
 				} else {
 					$def = $defaultValue[0]->getArguments()[0];
 				}
-			} elseif ($attr = $prop->getAttributes(DefaultFromSchematic::class)) {
-				$schematic = $attr[0]->getArguments()[0];
-				$def = $schematic::createFromArray();
+			} elseif ($attr = $prop->getAttributes(DefaultFromConfig::class)) {
+				$config = $attr[0]->getArguments()[0];
+				$def = $config::createFromArray();
 			} else {
 				$def = null;
 			}
@@ -174,7 +174,7 @@ class Schematic extends ArrayHash
 	}
 
 
-	public function isSameAs(Schematic $other): bool
+	public function isSameAs(Config $other): bool
 	{
 		if (!$other instanceof self) {
 			throw new InvalidArgumentException;
@@ -203,7 +203,7 @@ class Schematic extends ArrayHash
 			if ($one != $two) {
 				return false;
 			}
-		} elseif ($one instanceof Schematic) {
+		} elseif ($one instanceof Config) {
 			if (!$one->isSameAs($two)) {
 				return false;
 			}
