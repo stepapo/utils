@@ -52,7 +52,7 @@ class Schematic extends ArrayHash
 		}
 		if ($key) {
 			$keyProperty = static::getKeyProperty();
-			if ($keyProperty) {
+			if ($keyProperty && !isset($config[$keyProperty])) {
 				$config[$keyProperty] = $key;
 			}
 		}
