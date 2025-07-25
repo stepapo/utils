@@ -6,6 +6,7 @@ namespace Stepapo\Utils\Orm;
 
 use Nextras\Orm\Collection\Aggregations\AnyAggregator;
 use Nextras\Orm\Collection\Aggregations\NoneAggregator;
+use Nextras\Orm\Collection\ICollection;
 
 
 class Has
