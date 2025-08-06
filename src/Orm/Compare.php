@@ -14,37 +14,37 @@ use Nextras\Orm\Collection\Functions\CompareSmallerThanFunction;
 
 class Compare
 {
-	public static function equals(array|string $expression, $value): array
+	public static function equals(array|string $expression, mixed $value): array
 	{
 		return [CompareEqualsFunction::class, $expression, $value];
 	}
 
 
-	public static function greaterThanOrEquals(array|string $expression, $value): array
+	public static function greaterThanOrEquals(array|string $expression, mixed $value): array
 	{
 		return [CompareGreaterThanEqualsFunction::class, $expression, $value];
 	}
 
 
-	public static function greaterThan(array|string $expression, $value): array
+	public static function greaterThan(array|string $expression, mixed $value): array
 	{
 		return [CompareGreaterThanFunction::class, $expression, $value];
 	}
 
 
-	public static function notEquals(array|string $expression, $value): array
+	public static function notEquals(array|string $expression, mixed $value): array
 	{
 		return [CompareNotEqualsFunction::class, $expression, $value];
 	}
 
 
-	public static function smallerThanOrEquals(array|string $expression, $value): array
+	public static function smallerThanOrEquals(array|string $expression, mixed $value): array
 	{
 		return [CompareSmallerThanEqualsFunction::class, $expression, $value];
 	}
 
 
-	public static function smallerThan(array|string $expression, $value): array
+	public static function smallerThan(array|string $expression, mixed $value): array
 	{
 		return [CompareSmallerThanFunction::class, $expression, $value];
 	}
