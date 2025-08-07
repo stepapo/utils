@@ -211,9 +211,6 @@ class Config extends ArrayHash
 			sort($one);
 			sort($two);
 			return $one == $two;
-//			foreach ($one as $key => $value) {
-//				return $this->areSame($one[$key], $two[$key] ?? null);
-//			}
 		} elseif ($one !== $two) {
 			return false;
 		}

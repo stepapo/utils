@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Stepapo\Utils;
 
 
+use Stepapo\Model\Orm\DiffList;
+use Tracy\Dumper;
+
 class Printer
 {
 	public function printSeparator(string $color = 'silver'): void
@@ -28,6 +31,43 @@ class Printer
 	public function printText(string $text, string $color = 'silver'): void
 	{
 		echo $this->color($color, $text);
+	}
+
+
+	public function printDiff(DiffList $diff, int $tabCount = 0): void
+	{
+		if (isset($diff->propertyList)) {
+			foreach ($diff->propertyList as $key => $value) {
+				for ($i = 0; $i < $tabCount; $i++) {
+					$this->printText("| ", 'gray');
+				}
+				$this->printText((string) $key, $key === 'removedCount' ? 'maroon' : 'olive');
+				if (isset($value->entityList) || isset($value->propertyList)) {
+					$this->printText(':');
+					$this->printText("\n");
+					$this->printDiff($value, $tabCount + 1);
+				} else {
+					$this->printText(': ');
+					if ($key === 'removedCount') {
+						$this->printText((string) $value);
+					} else {
+						$this->printText(($value['old'] ? ($value['old'] . ' -> ') : '') . $value['new']);
+					}
+					$this->printText("\n");
+				}
+			}
+		}
+		if (isset($diff->entityList)) {
+			foreach ($diff->entityList as $key => $value) {
+				for ($i = 0; $i < $tabCount; $i++) {
+					$this->printText('| ', 'gray');
+				}
+				$this->printText((string) $key, 'teal');
+				$this->printText(':');
+				$this->printText("\n");
+				$this->printDiff($value, $tabCount + 1);
+			}
+		}
 	}
 
 
