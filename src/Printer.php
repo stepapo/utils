@@ -6,7 +6,6 @@ namespace Stepapo\Utils;
 
 
 use Stepapo\Model\Orm\DiffList;
-use Tracy\Dumper;
 
 class Printer
 {
