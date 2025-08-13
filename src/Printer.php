@@ -6,6 +6,7 @@ namespace Stepapo\Utils;
 
 
 use Stepapo\Model\Orm\DiffList;
+use Tracy\Dumper;
 
 class Printer
 {
@@ -50,7 +51,11 @@ class Printer
 					if ($key === 'removedCount') {
 						$this->printText((string) $value);
 					} else {
-						$this->printText(($value['old'] ? ($value['old'] . ' -> ') : '') . $value['new']);
+						if ($value['new'] instanceof \DateTimeInterface) {
+							$this->printText(($value['old'] ? ($value['old']->format('Y-m-d H:i:s') . ' -> ') : '') . $value['new']->format('Y-m-d H:i:s'));
+						} else {
+							$this->printText(($value['old'] ? ($value['old'] . ' -> ') : '') . $value['new']);
+						}
 					}
 					$this->printText("\n");
 				}
