@@ -20,6 +20,7 @@ use Stepapo\Utils\Attribute\CopyValue;
 use Stepapo\Utils\Attribute\DefaultFromConfig;
 use Stepapo\Utils\Attribute\DefaultValue;
 use Stepapo\Utils\Attribute\KeyProperty;
+use Stepapo\Utils\Attribute\SkipInComparison;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
@@ -182,6 +183,9 @@ class Config extends ArrayHash
 		$rc = new ReflectionClass($this);
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
+			if ($prop->getAttributes(SkipInComparison::class)) {
+				continue;
+			}
 			$name = $prop->getName();
 			if (!isset($this->{$name}) xor !isset($other->{$name})) {
 				return false;
