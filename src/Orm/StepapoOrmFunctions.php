@@ -27,6 +27,10 @@ trait StepapoOrmFunctions
 	public const string MONTH_FILTER = 'monthFilter';
 	public const string DAY_FILTER = 'dayFilter';
 	public const string DATE_FILTER = 'dateFilter';
+	public const string HAS_ANY = 'hasAny';
+	public const string HAS_ALL = 'hasAll';
+	public const string HAS_EXACT = 'hasExact';
+	public const string HAS_NONE = 'hasNone';
 
 
 	public function __construct(
@@ -194,6 +198,34 @@ trait StepapoOrmFunctions
 			[$column],
 			$aggregator,
 		);
+	}
+
+
+	public static function hasAny(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	{
+		assert(count($args) === 2 && is_string($args[0]));
+		return $helper->processExpression($builder, Has::any($args[0], $args[1]), $aggregator);
+	}
+
+
+	public static function hasAll(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	{
+		assert(count($args) === 2 && is_string($args[0]));
+		return $helper->processExpression($builder, Has::all($args[0], $args[1]), $aggregator);
+	}
+
+
+	public static function hasExact(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	{
+		assert(count($args) === 2 && is_string($args[0]));
+		return $helper->processExpression($builder, Has::exact($args[0], $args[1]), $aggregator);
+	}
+
+
+	public static function hasNone(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	{
+		assert(count($args) === 2 && is_string($args[0]));
+		return $helper->processExpression($builder, Has::none($args[0], $args[1]), $aggregator);
 	}
 
 
