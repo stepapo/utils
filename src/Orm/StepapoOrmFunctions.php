@@ -9,7 +9,9 @@ use Nextras\Dbal\IConnection;
 use Nextras\Dbal\Platforms\IPlatform;
 use Nextras\Dbal\QueryBuilder\QueryBuilder;
 use Nextras\Orm\Collection\Aggregations\Aggregator;
+use Nextras\Orm\Collection\Expression\LikeExpression;
 use Nextras\Orm\Collection\Functions\CollectionFunction;
+use Nextras\Orm\Collection\Functions\CompareLikeFunction;
 use Nextras\Orm\Collection\Functions\Result\ArrayExpressionResult;
 use Nextras\Orm\Collection\Functions\Result\DbalExpressionResult;
 use Nextras\Orm\Collection\Helpers\ArrayCollectionHelper;
@@ -23,14 +25,17 @@ trait StepapoOrmFunctions
 	public const string CONCAT_FILTER = 'concatFilter';
 	public const string CONCAT_SORT = 'concatSort';
 	public const string COALESCE_SORT = 'coalesceSort';
-	public const string YEAR_FILTER = 'yearFilter';
-	public const string MONTH_FILTER = 'monthFilter';
-	public const string DAY_FILTER = 'dayFilter';
-	public const string DATE_FILTER = 'dateFilter';
-	public const string HAS_ANY = 'hasAny';
-	public const string HAS_ALL = 'hasAll';
-	public const string HAS_EXACT = 'hasExact';
-	public const string HAS_NONE = 'hasNone';
+	public const string YEAR = 'year';
+	public const string MONTH = 'month';
+	public const string DAY = 'day';
+	public const string DATE = 'date';
+	public const string ANY = 'any';
+	public const string ALL = 'all';
+	public const string EXACT = 'exact';
+	public const string NONE = 'none';
+	public const string CONTAINS = 'contains';
+	public const string STARTS_WITH = 'startsWith';
+	public const string ENDS_WITH = 'endsWith';
 
 
 	public function __construct(
@@ -149,83 +154,104 @@ trait StepapoOrmFunctions
 	}
 
 
-	public static function yearFilter(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function year(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
-		assert(count($args) === 2 && is_string($args[0]) && is_string($args[1]));
+		assert(count($args) === 1 && is_string($args[0]));
 		$column = $helper->processExpression($builder, $args[0], $aggregator);
 		return static::createDbalExpression(
-			$platform->getName() === 'pgsql' ? 'EXTRACT(year FROM %column) = %i' : 'YEAR(%column) = %i',
-			[$column->args[0], $args[1]],
+			$platform->getName() === 'pgsql' ? 'EXTRACT(year FROM %column)' : 'YEAR(%column)',
+			[$column->args[0]],
 			[$column],
 			$aggregator,
 		);
 	}
 
 
-	public static function monthFilter(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function month(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
-		assert(count($args) === 2 && is_string($args[0]) && is_string($args[1]));
+		assert(count($args) === 1 && is_string($args[0]));
 		$column = $helper->processExpression($builder, $args[0], $aggregator);
 		return static::createDbalExpression(
-			$platform->getName() === 'pgsql' ? 'EXTRACT(month FROM %column) = %i' : 'MONTH(%column) = %i',
-			[$column->args[0], $args[1]],
+			$platform->getName() === 'pgsql' ? 'EXTRACT(month FROM %column)' : 'MONTH(%column)',
+			[$column->args[0]],
 			[$column],
 			$aggregator,
 		);
 	}
 
 
-	public static function dayFilter(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function day(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
-		assert(count($args) === 2 && is_string($args[0]) && is_string($args[1]));
+		assert(count($args) === 1 && is_string($args[0]));
 		$column = $helper->processExpression($builder, $args[0], $aggregator);
 		return static::createDbalExpression(
-			$platform->getName() === 'pgsql' ? 'EXTRACT(day FROM %column) = %i' : 'DAY(%column) = %i',
-			[$column->args[0], $args[1]],
+			$platform->getName() === 'pgsql' ? 'EXTRACT(day FROM %column)' : 'DAY(%column)',
+			[$column->args[0]],
 			[$column],
 			$aggregator,
 		);
 	}
 
 
-	public static function dateFilter(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function date(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
-		assert(count($args) === 2 && is_string($args[0]) && is_string($args[1]));
+		assert(count($args) === 1 && is_string($args[0]));
 		$column = $helper->processExpression($builder, $args[0], $aggregator);
 		return static::createDbalExpression(
-			$platform->getName() === 'pgsql' ? '$column::date = %dt::date' : 'DATE(%column) = DATE(%dt)',
-			[$column->args[0], $args[1]],
+			$platform->getName() === 'pgsql' ? '%column::date' : 'DATE(%column)',
+			[$column->args[0]],
 			[$column],
 			$aggregator,
 		);
 	}
 
 
-	public static function hasAny(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function any(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
 		assert(count($args) === 2 && is_string($args[0]));
 		return $helper->processExpression($builder, Has::any($args[0], $args[1]), $aggregator);
 	}
 
 
-	public static function hasAll(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function all(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
 		assert(count($args) === 2 && is_string($args[0]));
 		return $helper->processExpression($builder, Has::all($args[0], $args[1]), $aggregator);
 	}
 
 
-	public static function hasExact(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function exact(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
 		assert(count($args) === 2 && is_string($args[0]));
 		return $helper->processExpression($builder, Has::exact($args[0], $args[1]), $aggregator);
 	}
 
 
-	public static function hasNone(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	public static function none(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
 	{
 		assert(count($args) === 2 && is_string($args[0]));
 		return $helper->processExpression($builder, Has::none($args[0], $args[1]), $aggregator);
+	}
+
+
+	public static function contains(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	{
+		assert(count($args) === 2 && is_string($args[0]) && is_string($args[1]));
+		return (new CompareLikeFunction)->processDbalExpression($helper, $builder, [$args[0], LikeExpression::contains($args[1])], $aggregator);
+	}
+
+
+	public static function startsWith(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	{
+		assert(count($args) === 2 && is_string($args[0]) && is_string($args[1]));
+		return (new CompareLikeFunction)->processDbalExpression($helper, $builder, [$args[0], LikeExpression::startsWith($args[1])], $aggregator);
+	}
+
+
+	public static function endsWith(IPlatform $platform, DbalQueryBuilderHelper $helper, QueryBuilder $builder, array $args, ?Aggregator $aggregator): DbalExpressionResult
+	{
+		assert(count($args) === 2 && is_string($args[0]) && is_string($args[1]));
+		return (new CompareLikeFunction)->processDbalExpression($helper, $builder, [$args[0], LikeExpression::endsWith($args[1])], $aggregator);
 	}
 
 
