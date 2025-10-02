@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stepapo\Utils;
 
-use App\Model\File\FileData;
+use Build\Model\File\FileData;
 use Nette\Forms\Container;
 use Nette\Forms\Form;
 
