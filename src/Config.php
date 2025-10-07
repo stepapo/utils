@@ -167,7 +167,7 @@ class Config extends ArrayHash
 		$props = $rc->getProperties();
 		foreach ($props as $prop) {
 			$name = $prop->getName();
-			if ($prop->getAttributes(ValueProperty::class)) {
+			if ($prop->getAttributes(ValueProperty::class) && !$prop->getAttributes(KeyProperty::class)) {
 				return $name;
 			}
 		}
