@@ -24,6 +24,7 @@ use Stepapo\Utils\Attribute\SkipInComparison;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
+use Tracy\Dumper;
 
 
 class Config extends ArrayHash
@@ -120,7 +121,8 @@ class Config extends ArrayHash
 			if ($prop->hasDefaultValue()) {
 				$def = $prop->getDefaultValue();
 			} elseif ($defaultValue = $prop->getAttributes(DefaultValue::class)) {
-				if ($type = $prop->getAttributes(Type::class)) {
+				if ($t = $prop->getAttributes(Type::class)) {
+					$type = $t;
 					$config = $type[0]->getArguments()[0];
 					$def = $config::createFromArray($defaultValue[0]->getArguments()[0]);
 				} else {
