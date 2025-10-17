@@ -24,7 +24,6 @@ use Stepapo\Utils\Attribute\SkipInComparison;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
-use Tracy\Dumper;
 
 
 class Config extends ArrayHash
