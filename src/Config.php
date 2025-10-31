@@ -15,6 +15,7 @@ use Nette\Utils\ArrayHash;
 use Nette\Utils\FileSystem;
 use Nette\Utils\Validators;
 use ReflectionClass;
+use Stepapo\Restful\Utils\Strings;
 use Stepapo\Utils\Attribute\ArrayOfType;
 use Stepapo\Utils\Attribute\CopyValue;
 use Stepapo\Utils\Attribute\DefaultFromConfig;
@@ -24,10 +25,17 @@ use Stepapo\Utils\Attribute\SkipInComparison;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
+use Tracy\Dumper;
 
 
 class Config extends ArrayHash
 {
+	protected static function getExtensionName(): ?string
+	{
+		return null;
+	}
+
+
 	public static function createFromNeon(string $file, array $params = [], bool $skipDefaults = false): static
 	{
 		return static::createFromArray(static::neonToArray($file, $params), skipDefaults: $skipDefaults);
@@ -37,6 +45,10 @@ class Config extends ArrayHash
 	public static function neonToArray(string $file, array $params = []): array
 	{
 		$config = (array) Neon::decode(FileSystem::read($file));
+		$extName = static::getExtensionName();
+		if ($extName && isset($config[$extName])) {
+			$config = $config[$extName];
+		}
 		return ConfigProcessor::process($config, $params);
 	}
 

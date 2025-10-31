@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Stepapo\Utils;
 
+use Stepapo\Model\Definition\Config\Definition;
 use Stepapo\Model\Orm\DiffList;
 
 
