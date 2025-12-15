@@ -87,7 +87,7 @@ class Config extends ArrayHash
 		foreach ($props as $prop) {
 			$name = $prop->getName();
 			if ($attr = $prop->getAttributes(Type::class)) {
-				if (isset($config[$name])) {
+				if (isset($config[$name]) && !is_numeric($config[$name])) {
 					$class = $attr[0]->getArguments()[0];
 					$config[$name] = $class::createFromArray($config[$name], skipDefaults: $skipDefaults, parentKey: $key);
 				}
