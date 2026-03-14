@@ -15,7 +15,6 @@ use Nette\Utils\ArrayHash;
 use Nette\Utils\FileSystem;
 use Nette\Utils\Validators;
 use ReflectionClass;
-use Stepapo\Restful\Utils\Strings;
 use Stepapo\Utils\Attribute\ArrayOfType;
 use Stepapo\Utils\Attribute\CopyValue;
 use Stepapo\Utils\Attribute\DefaultFromConfig;
@@ -25,7 +24,6 @@ use Stepapo\Utils\Attribute\SkipInComparison;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
-use Tracy\Dumper;
 
 
 class Config extends ArrayHash
