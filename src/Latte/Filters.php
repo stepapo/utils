@@ -14,7 +14,7 @@ class Filters
 	public static function intlDate(DateTimeInterface $time, string $pattern, ?string $locale = null): ?string
 	{
 		$formatter = new IntlDateFormatter(
-			$locale ?: setlocale(LC_TIME, 0),
+			$locale ?: setlocale(LC_TIME, null),
 			IntlDateFormatter::LONG,
 			IntlDateFormatter::LONG
 		);
