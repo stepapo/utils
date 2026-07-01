@@ -131,8 +131,8 @@ class Config extends ArrayHash
 				$def = $prop->getDefaultValue();
 			} elseif ($defaultValue = $prop->getAttributes(DefaultValue::class)) {
 				if ($t = $prop->getAttributes(Type::class)) {
-					$type = $t;
-					$config = $type[0]->getArguments()[0];
+					$type = $t[0];
+					$config = $type->getArguments()[0];
 					$def = $config::createFromArray($defaultValue[0]->getArguments()[0]);
 				} else {
 					$def = $defaultValue[0]->getArguments()[0];
@@ -144,7 +144,7 @@ class Config extends ArrayHash
 				$def = null;
 			}
 			if ($def === null) {
-				if (Validators::is(null, $type)) {
+				if (Validators::is(null, (string) $type)) {
 					$item->default(null);
 				} else if (!$skipDefaults) {
 					$item->required();
@@ -188,7 +188,7 @@ class Config extends ArrayHash
 
 	public function isSameAs(Config $other): bool
 	{
-		if (!$other instanceof self) {
+		if (!$other instanceof static) {
 			throw new InvalidArgumentException;
 		}
 		$rc = new ReflectionClass($this);

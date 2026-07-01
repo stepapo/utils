@@ -27,7 +27,7 @@ abstract class StepapoExtension extends CompilerExtension
 
 	public function __construct()
 	{
-		$this->moduleDir = dirname((new ReflectionClass($this))->getFileName()) . '/..';
+		$this->moduleDir = dirname((string) new ReflectionClass($this)->getFileName()) . '/..';
 		$this->processor = new Processor;
 	}
 
@@ -63,7 +63,7 @@ abstract class StepapoExtension extends CompilerExtension
 	}
 
 
-	protected function processSchema(Schema $schema, array $config)
+	protected function processSchema(Schema $schema, array $config): mixed
 	{
 		try {
 			return $this->processor->process($schema, $config);

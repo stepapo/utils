@@ -35,7 +35,7 @@ class Has
 		foreach ($value as $v) {
 			$result[] = $v === null
 				? Compare::equals(Aggregate::count($expression), 0)
-				: [ICollection::AND, new AnyAggregator(Random::generate()), $expression => $v];
+				: [ICollection::AND, new AnyAggregator(Random::generate()), $expression => $v]; // @phpstan-ignore argument.type
 		}
 		return $result;
 	}

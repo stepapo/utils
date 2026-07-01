@@ -44,6 +44,7 @@ class Printer
 				if (isset($value->entityList) || isset($value->propertyList)) {
 					$this->printText(':');
 					$this->printText("\n");
+					assert($value instanceof DiffList);
 					$this->printDiff($value, $tabCount + 1);
 				} else {
 					$this->printText(': ');

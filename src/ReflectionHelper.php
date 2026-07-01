@@ -19,11 +19,12 @@ class ReflectionHelper
 					return true;
 				}
 			} elseif ($prop->getType() instanceof ReflectionUnionType) {
-				foreach ($prop->getType()->getTypes() as $type) {
-					if ($type->getName() === $t) {
-						return true;
-					}
-				}
+				return self::propertyHasType($prop, $prop->getType()->getTypes());
+//				foreach ($prop->getType()->getTypes() as $type) {
+//					if ($type->getName() === $t) {
+//						return true;
+//					}
+//				}
 			}
 		}
 		return false;

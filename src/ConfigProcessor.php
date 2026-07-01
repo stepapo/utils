@@ -29,6 +29,9 @@ class ConfigProcessor
 	}
 
 
+	/**
+	 * @param non-empty-string $sep
+	 */
 	private static function getValue(array $array, string $path, string $sep = '.'): mixed
 	{
 		$keys = $path === '' ? [] : explode($sep, $path);

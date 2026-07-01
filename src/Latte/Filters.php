@@ -14,7 +14,7 @@ class Filters
 	public static function intlDate(DateTimeInterface $time, string $pattern, ?string $locale = null): ?string
 	{
 		$formatter = new IntlDateFormatter(
-			$locale ?: setlocale(LC_TIME, null),
+			$locale ?: (string) setlocale(LC_TIME, null),
 			IntlDateFormatter::LONG,
 			IntlDateFormatter::LONG
 		);
@@ -38,6 +38,7 @@ class Filters
 	public static function monthName(int $monthNumber, ?string $locale = null): string
 	{
 		$dateTime = DateTime::createFromFormat('!m', (string) $monthNumber);
+		assert($dateTime !== false);
 		return static::intlDate($dateTime, 'MMM', $locale);
 	}
 

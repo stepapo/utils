@@ -14,6 +14,7 @@ class MonthNameProvider implements Service
 		$months = [];
 		for ($i = 1; $i <= 12; $i++) {
 			$date = \DateTime::createFromFormat('!m', (string) $i);
+			assert($date !== false);
 			$formatter = new \IntlDateFormatter($lang, pattern: $pattern);
 			$months[$i] = Strings::firstUpper($formatter->format($date));
 		}

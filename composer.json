@@ -1,27 +1,27 @@
 {
-    "name": "stepapo/utils",
-    "type": "library",
-    "description": "Various helpers to use with all stepapo and webovac packages.",
-    "keywords": ["nette", "nextras", "utils"],
-    "homepage": "https://github.com/stepapo/utils",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Štěpán Postler"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/stepapo/utils/issues"
-    },
-    "require": {
-        "php": ">=8.3",
-        "nette/neon": "^3.4",
-        "nette/schema": "^1.3",
-        "nette/utils": "^4.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Stepapo\\Utils\\": "src/"
-        }
-    }
+	"name": "stepapo/utils",
+	"type": "library",
+	"description": "Various helpers to use with all stepapo and webovac packages.",
+	"keywords": ["nette", "nextras", "utils"],
+	"homepage": "https://github.com/stepapo/utils",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Štěpán Postler"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/stepapo/utils/issues"
+	},
+	"require": {
+		"php": ">=8.5",
+		"nette/neon": "^3.4",
+		"nette/schema": "^1.3",
+		"nette/utils": "^4.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Stepapo\\Utils\\": "src/"
+		}
+	}
 }

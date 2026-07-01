@@ -28,10 +28,10 @@ class FileControl extends Container
 	}
 
 
-	/** @param FileData|null $values */
 	public function setValues(array|object $values, bool $erase = false, bool $onlyDisabled = false): static
 	{
 		if ($values) {
+			assert($values instanceof FileData);
 			$this['identifier']->setDefaultValue($values->identifier);
 			$this['upload']->setOption('file', $values);
 		}
