@@ -24,6 +24,7 @@ use Stepapo\Utils\Attribute\SkipInComparison;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
+use function array_key_exists, is_array;
 
 
 class Config extends ArrayHash
@@ -51,7 +52,12 @@ class Config extends ArrayHash
 	}
 
 
-	public static function createFromArray(mixed $config = [], mixed $key = null, bool $skipDefaults = false, mixed $parentKey = null): static
+	public static function createFromArray(
+		mixed $config = [],
+		mixed $key = null,
+		bool $skipDefaults = false,
+		mixed $parentKey = null,
+	): static
 	{
 		$schema = static::getSchema($skipDefaults);
 		if (!$schema) {
@@ -146,7 +152,7 @@ class Config extends ArrayHash
 			if ($def === null) {
 				if (Validators::is(null, (string) $type)) {
 					$item->default(null);
-				} else if (!$skipDefaults) {
+				} elseif (!$skipDefaults) {
 					$item->required();
 				}
 			} else {
@@ -154,7 +160,7 @@ class Config extends ArrayHash
 			}
 		}
 
-		return (new Structure($items))->skipDefaults($skipDefaults)->castTo($rc->getName());
+		return new Structure($items)->skipDefaults($skipDefaults)->castTo($rc->getName());
 	}
 
 
@@ -186,7 +192,7 @@ class Config extends ArrayHash
 	}
 
 
-	public function isSameAs(Config $other): bool
+	public function isSameAs(self $other): bool
 	{
 		if (!$other instanceof static) {
 			throw new InvalidArgumentException;
@@ -218,7 +224,7 @@ class Config extends ArrayHash
 			if ($one != $two) {
 				return false;
 			}
-		} elseif ($one instanceof Config) {
+		} elseif ($one instanceof self) {
 			if (!$one->isSameAs($two)) {
 				return false;
 			}

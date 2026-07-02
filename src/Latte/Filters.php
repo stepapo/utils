@@ -7,6 +7,7 @@ namespace Stepapo\Utils\Latte;
 use DateTime;
 use DateTimeInterface;
 use IntlDateFormatter;
+use const LC_TIME;
 
 
 class Filters
@@ -16,7 +17,7 @@ class Filters
 		$formatter = new IntlDateFormatter(
 			$locale ?: (string) setlocale(LC_TIME, null),
 			IntlDateFormatter::LONG,
-			IntlDateFormatter::LONG
+			IntlDateFormatter::LONG,
 		);
 		$formatter->setPattern($pattern);
 		return $formatter->format($time);

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Stepapo\Utils;
 
+use const PHP_EOL;
+
 
 class CliProgress
 {
@@ -12,8 +14,9 @@ class CliProgress
 	private int $current = 0;
 
 
-	public function __construct(private int $itemCount)
-	{
+	public function __construct(
+		private int $itemCount,
+	) {
 		$this->digitCount = $itemCount ? (int) floor(log($itemCount, 10) + 1) : 1;
 		$this->totalCharsCount = $this->digitCount * 2 + 10;
 	}
@@ -33,7 +36,7 @@ class CliProgress
 			$this->itemCount ? floor($this->current / $this->itemCount * 100) : 100,
 			$this->digitCount,
 			$this->current,
-			$this->itemCount
+			$this->itemCount,
 		);
 		$this->current++;
 	}

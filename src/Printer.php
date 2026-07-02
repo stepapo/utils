@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stepapo\Utils;
 
 use Stepapo\Model\Orm\DiffList;
+use const PHP_EOL;
 
 
 class Printer
@@ -38,7 +39,7 @@ class Printer
 		if (isset($diff->propertyList)) {
 			foreach ($diff->propertyList as $key => $value) {
 				for ($i = 0; $i < $tabCount; $i++) {
-					$this->printText("| ", 'gray');
+					$this->printText('| ', 'gray');
 				}
 				$this->printText((string) $key, $key === 'removedCount' ? 'maroon' : 'olive');
 				if (isset($value->entityList) || isset($value->propertyList)) {

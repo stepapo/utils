@@ -8,6 +8,7 @@ use Nette\Utils\Random;
 use Nextras\Orm\Collection\Aggregations\AnyAggregator;
 use Nextras\Orm\Collection\Aggregations\NoneAggregator;
 use Nextras\Orm\Collection\ICollection;
+use function count, in_array;
 
 
 class Has

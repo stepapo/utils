@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Stepapo\Utils;
 
+use function array_key_exists, is_array, is_string;
+
 
 class ConfigProcessor
 {

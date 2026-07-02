@@ -10,6 +10,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class DefaultFromConfig
 {
-	public function __construct(public string $config)
-	{}
+	public function __construct(
+		public string $config,
+	) {
+	}
 }

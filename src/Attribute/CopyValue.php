@@ -10,6 +10,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class CopyValue
 {
-	public function __construct(public string $from)
-	{}
+	public function __construct(
+		public string $from,
+	) {
+	}
 }
