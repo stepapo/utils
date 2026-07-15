@@ -28,7 +28,7 @@ class CliProgress
 	}
 
 
-	public function iterate(): void
+	public function iterate(int $size = 1): void
 	{
 		printf(
 			"\033[%dD%3d%% : %*d / %d",
@@ -38,7 +38,7 @@ class CliProgress
 			$this->current,
 			$this->itemCount,
 		);
-		$this->current++;
+		$this->current += $size;
 	}
 
 
