@@ -9,7 +9,7 @@ use Nette\Utils\Arrays;
 
 class ConvertArray
 {
-	/** @returns int[] */
+	/** @return int[] */
 	public static function toInt(array $array): array
 	{
 		return Arrays::map($array, fn(mixed $v) => (int) $v);
