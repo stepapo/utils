@@ -25,10 +25,19 @@ use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
 use function array_key_exists, is_array;
+use const PATHINFO_EXTENSION;
 
 
 class Config extends ArrayHash
 {
+	public function __construct(mixed ...$args)
+	{
+		foreach ($args as $k => $v) {
+			$this->$k = $v;
+		}
+	}
+
+
 	protected static function getExtensionName(): ?string
 	{
 		return null;
@@ -43,7 +52,12 @@ class Config extends ArrayHash
 
 	public static function neonToArray(string $file, array $params = []): array
 	{
-		$config = (array) Neon::decode(FileSystem::read($file));
+		$config = match ($ext = pathinfo($file, PATHINFO_EXTENSION)) {
+			'neon' => (array) Neon::decode(FileSystem::read($file)),
+			'yml' => yaml_parse_file($file),
+			default => throw new InvalidArgumentException("File extension '$ext' is not supported."),
+		};
+		$config = ConfigProcessor::processIncludes($file, $config, $params);
 		$extName = static::getExtensionName();
 		if ($extName && isset($config[$extName])) {
 			$config = $config[$extName];
