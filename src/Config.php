@@ -24,7 +24,7 @@ use Stepapo\Utils\Attribute\SkipInComparison;
 use Stepapo\Utils\Attribute\ToArray;
 use Stepapo\Utils\Attribute\Type;
 use Stepapo\Utils\Attribute\ValueProperty;
-use function array_key_exists, is_array;
+use function array_key_exists, is_array, is_string;
 use const PATHINFO_EXTENSION;
 
 
@@ -97,6 +97,12 @@ class Config extends ArrayHash
 			if ($config[$name] instanceof Entity) {
 				$rf = new ReflectionClass($config[$name]->value);
 				$config[$name] = $rf->newInstance(...$config[$name]->attributes);
+			}
+			if (is_string($config[$name])) {
+				preg_match("/\\DateTime\\('(.*)'\\)/", $config[$name], $m);
+				if (isset($m[1])) {
+					$config[$name] = new \DateTime($m[1]);
+				}
 			}
 			if ($prop->getAttributes(ToArray::class)) {
 				$config[$name] = (array) $config[$name];
