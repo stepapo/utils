@@ -227,7 +227,7 @@ class Config extends ArrayHash
 			if (!isset($this->{$name}) xor !isset($other->{$name})) {
 				return false;
 			}
-			if (!isset($this->{$name}) && !isset($this->{$name})) {
+			if (!isset($this->{$name}) && !isset($other->{$name})) {
 				continue;
 			}
 			if (!$this->areSame($this->{$name}, $other->{$name})) {
